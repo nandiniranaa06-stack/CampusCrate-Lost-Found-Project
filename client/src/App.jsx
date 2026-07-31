@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
+// Define base URL dynamically using environment variable or fallback
+const API_URL = import.meta.env.VITE_API_URL || "https://campuscrate-lost-found-project.onrender.com";
+
 function App() {
   const [items, setItems] = useState([]);
   const [title, setTitle] = useState("");
@@ -38,7 +41,7 @@ function App() {
 
   const checkBackend = async () => {
     try {
-      await axios.get("https://campuscrate-lost-found-project.onrender.com/api/items");
+      await axios.get(`${API_URL}/api/items`);
       setBackendStatus("🔵 Backend Connected Successfully");
     } catch (err) {
       setBackendStatus("⚪ Backend Connection Failed");
@@ -47,7 +50,7 @@ function App() {
 
   const fetchItems = async () => {
     try {
-      let url = "https://campuscrate-lost-found-project.onrender.com/api/items?";
+      let url = `${API_URL}/api/items?`;
       if (filterCategory !== "All") {
         url += `category=${filterCategory}&`;
       }
@@ -67,14 +70,14 @@ function App() {
     try {
       const newItem = { 
         title, 
-        description, 
+        description,
         location,
         type,
         category,
         date,
         claimQuestion 
       };
-      const res = await axios.post("https://campuscrate-lost-found-project.onrender.com/api/items", newItem);
+      const res = await axios.post(`${API_URL}/api/items`, newItem);
       setItems([res.data, ...items]);
       setTitle("");
       setDescription("");
@@ -94,7 +97,7 @@ function App() {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`https://campuscrate-lost-found-project.onrender.com/api/items/${id}`);
+      await axios.delete(`${API_URL}/api/items/${id}`);
       setItems(items.filter((item) => item._id !== id));
       showToast("🗑️ Item deleted successfully.");
     } catch (err) {
@@ -297,7 +300,7 @@ function App() {
         ) : (
           <ul style={{ listStyle: 'none', padding: '0', margin: '0', display: 'flex', flexDirection: 'column', gap: '12px' }}>
             {Array.isArray(items) && items.map((item) => (
-  <li key={item._id} style={{
+              <li key={item._id} style={{
                 background: '#ffffff',
                 padding: '16px',
                 borderRadius: '12px',
