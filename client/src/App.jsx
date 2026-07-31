@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-// Define base URL dynamically using environment variable or fallback
 const API_URL = import.meta.env.VITE_API_URL || "https://campuscrate-lost-found-project.onrender.com";
 
 function App() {
@@ -16,11 +15,9 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
 
-  // Search and Filter States
   const [searchQuery, setSearchQuery] = useState("");
   const [filterCategory, setFilterCategory] = useState("All");
 
-  // Claim Modal States
   const [selectedItem, setSelectedItem] = useState(null);
   const [claimAnswer, setClaimAnswer] = useState("");
   const [claimStatus, setClaimStatus] = useState("");
@@ -127,7 +124,6 @@ function App() {
       position: 'relative'
     }}>
       
-      {/* Floating Toast Notification */}
       {toastMessage && (
         <div style={{
           position: 'fixed',
@@ -146,7 +142,6 @@ function App() {
         </div>
       )}
 
-      {/* Main Form Container Card */}
       <div style={{
         background: '#ffffff',
         padding: '35px',
@@ -255,7 +250,6 @@ function App() {
         </form>
       </div>
 
-      {/* Items List & Controls Section */}
       <div style={{
         background: '#ffffff',
         padding: '30px',
@@ -270,7 +264,6 @@ function App() {
           Campus Items Feed
         </h2>
 
-        {/* Search and Filter Controls */}
         <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
           <input
             type="text"
@@ -334,7 +327,6 @@ function App() {
                     </small>
                   </div>
 
-                  {/* Action Buttons */}
                   <div style={{ display: 'flex', gap: '8px', marginTop: '12px' }}>
                     {item.claimQuestion && (
                       <button 
@@ -376,7 +368,6 @@ function App() {
         )}
       </div>
 
-      {/* Claim Modal Popup */}
       {selectedItem && (
         <div style={{
           position: 'fixed',
