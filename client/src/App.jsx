@@ -296,8 +296,8 @@ function App() {
           </div>
         ) : (
           <ul style={{ listStyle: 'none', padding: '0', margin: '0', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            {items.map((item) => (
-              <li key={item._id} style={{
+            {Array.isArray(items) && items.map((item) => (
+  <li key={item._id} style={{
                 background: '#ffffff',
                 padding: '16px',
                 borderRadius: '12px',
