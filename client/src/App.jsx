@@ -74,7 +74,7 @@ function App() {
         date,
         claimQuestion 
       };
-      const res = await axios.post("https://campuscrate-lost-found-project.onrender.com/items", newItem);
+      const res = await axios.post("https://campuscrate-lost-found-project.onrender.com/api/items", newItem);
       setItems([res.data, ...items]);
       setTitle("");
       setDescription("");
