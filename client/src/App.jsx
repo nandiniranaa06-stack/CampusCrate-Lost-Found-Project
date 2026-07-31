@@ -38,7 +38,7 @@ function App() {
 
   const checkBackend = async () => {
     try {
-      await axios.get("https://campuscrate-lost-found-project.onrender.com/");
+      await axios.get("https://campuscrate-lost-found-project.onrender.com/api/items");
       setBackendStatus("🔵 Backend Connected Successfully");
     } catch (err) {
       setBackendStatus("⚪ Backend Connection Failed");
@@ -47,7 +47,7 @@ function App() {
 
   const fetchItems = async () => {
     try {
-      let url = "https://campuscrate-lost-found-project.onrender.com/?";
+      let url = "https://campuscrate-lost-found-project.onrender.com/api/items?";
       if (filterCategory !== "All") {
         url += `category=${filterCategory}&`;
       }
@@ -94,7 +94,7 @@ function App() {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`https://campuscrate-lost-found-project.onrender.com/${id}`);
+      await axios.delete(`https://campuscrate-lost-found-project.onrender.com/api/items/${id}`);
       setItems(items.filter((item) => item._id !== id));
       showToast("🗑️ Item deleted successfully.");
     } catch (err) {
