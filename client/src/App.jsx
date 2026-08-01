@@ -12,8 +12,11 @@ function App() {
   const [category, setCategory] = useState("Electronics");
   const [date, setDate] = useState("");
   const [claimQuestion, setClaimQuestion] = useState("");
+  
+  const [imageFile, setImageFile] = useState(null);
+  
   const [loading, setLoading] = useState(false);
-  const [toastMessage, setToastMessage] = useState("");
+  const [toastMessage, setThemeMessage] = useState("");
 
   const [searchQuery, setSearchQuery] = useState("");
   const [filterCategory, setFilterCategory] = useState("All");
@@ -30,9 +33,9 @@ function App() {
   }, [filterCategory, searchQuery]);
 
   const showToast = (msg) => {
-    setToastMessage(msg);
+    setThemeMessage(msg);
     setTimeout(() => {
-      setToastMessage("");
+      setThemeMessage("");
     }, 3000);
   };
 
@@ -64,6 +67,39 @@ function App() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+
+    let photoUrl = "";
+
+    if (imageFile) {
+      const data = new FormData();
+      data.append("file", imageFile);
+      data.append("upload_preset", "campuscrate_preset"); // Updated to unsigned preset
+
+      try {
+        const cloudinaryRes = await fetch(
+          "https://api.cloudinary.com/v1_1/ws2kvkn5/image/upload",
+          {
+            method: "POST",
+            body: data,
+          }
+        );
+        const fileData = await cloudinaryRes.json();
+        if (fileData.secure_url) {
+          photoUrl = fileData.secure_url;
+        } else {
+          console.error("Cloudinary error response:", fileData);
+          showToast("❌ Image upload failed.");
+          setLoading(false);
+          return;
+        }
+      } catch (err) {
+        console.error("Cloudinary error:", err);
+        showToast("❌ Image upload failed.");
+        setLoading(false);
+        return;
+      }
+    }
+
     try {
       const newItem = { 
         title, 
@@ -72,7 +108,8 @@ function App() {
         type,
         category,
         date,
-        claimQuestion 
+        claimQuestion,
+        photoUrl
       };
       const res = await axios.post(`${API_URL}/items`, newItem);
       setItems([res.data, ...items]);
@@ -83,6 +120,7 @@ function App() {
       setCategory("Electronics");
       setDate("");
       setClaimQuestion("");
+      setImageFile(null);
       showToast("✨ Item posted successfully!");
     } catch (err) {
       console.log(err);
@@ -135,8 +173,7 @@ function App() {
           boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
           zIndex: 1100,
           fontWeight: '600',
-          fontSize: '0.95rem',
-          animation: 'fadeIn 0.3s ease-in-out'
+          fontSize: '0.95rem'
         }}>
           {toastMessage}
         </div>
@@ -146,7 +183,7 @@ function App() {
         background: '#ffffff',
         padding: '35px',
         borderRadius: '20px',
-        boxShadow: '0 10px 25px -5px rgba(37, 99, 235, 0.08), 0 8px 10px -6px rgba(37, 99, 235, 0.04)',
+        boxShadow: '0 10px 25px -5px rgba(37, 99, 235, 0.08)',
         width: '100%',
         maxWidth: '500px',
         marginBottom: '30px',
@@ -154,7 +191,7 @@ function App() {
         textAlign: 'center',
         border: '1px solid #e2e8f0'
       }}>
-        <h1 style={{ color: '#2563eb', margin: '0 0 8px 0', fontSize: '2.2rem', fontWeight: '800', letterSpacing: '-0.5px' }}>
+        <h1 style={{ color: '#2563eb', margin: '0 0 8px 0', fontSize: '2.2rem', fontWeight: '800' }}>
           CampusCrate
         </h1>
         <p style={{ color: '#64748b', fontSize: '1rem', margin: '0 0 15px 0', fontWeight: '500' }}>
@@ -235,6 +272,18 @@ function App() {
             style={inputStyle}
           />
 
+          <div style={{ textAlign: 'left' }}>
+            <label style={{ fontSize: '0.85rem', fontWeight: '600', color: '#64748b', display: 'block', marginBottom: '5px' }}>
+              Upload Item Photo
+            </label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => setImageFile(e.target.files[0])}
+              style={{ ...inputStyle, padding: '8px' }}
+            />
+          </div>
+
           <input
             type="text"
             placeholder="Claim Question (e.g., What wallpaper is on it?)"
@@ -245,7 +294,7 @@ function App() {
           />
 
           <button type="submit" disabled={loading} style={{ ...buttonStyle, opacity: loading ? 0.7 : 1 }}>
-            {loading ? "Posting Item..." : "Add Item"}
+            {loading ? "Uploading & Posting..." : "Add Item"}
           </button>
         </form>
       </div>
@@ -299,11 +348,19 @@ function App() {
                 borderRadius: '12px',
                 border: '1px solid #e2e8f0',
                 display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'flex-start',
+                flexDirection: 'column',
+                gap: '10px',
                 boxShadow: '0 2px 4px rgba(0,0,0,0.02)'
               }}>
-                <div style={{ textAlign: 'left', wordBreak: 'break-word', paddingRight: '10px', flex: 1 }}>
+                {item.photoUrl && (
+                  <img 
+                    src={item.photoUrl} 
+                    alt={item.title} 
+                    style={{ width: '100%', height: '180px', objectFit: 'cover', borderRadius: '8px' }} 
+                  />
+                )}
+
+                <div style={{ textAlign: 'left', wordBreak: 'break-word', flex: 1 }}>
                   <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '4px' }}>
                     <span style={{ 
                       fontSize: '0.7rem', 
@@ -321,11 +378,9 @@ function App() {
                   <p style={{ margin: '0 0 4px 0', color: '#64748b', fontSize: '0.9rem' }}>{item.description}</p>
                   <p style={{ margin: '0 0 6px 0', color: '#475569', fontSize: '0.85rem' }}>📂 {item.category} | 📅 {item.date}</p>
                   
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                    <small style={{ color: '#1e293b', fontWeight: '600', backgroundColor: '#eff6ff', padding: '2px 8px', borderRadius: '6px', display: 'inline-block', border: '1px solid #bfdbfe', width: 'fit-content' }}>
-                      📍 {item.location}
-                    </small>
-                  </div>
+                  <small style={{ color: '#1e293b', fontWeight: '600', backgroundColor: '#eff6ff', padding: '2px 8px', borderRadius: '6px', display: 'inline-block', border: '1px solid #bfdbfe' }}>
+                    📍 {item.location}
+                  </small>
 
                   <div style={{ display: 'flex', gap: '8px', marginTop: '12px' }}>
                     {item.claimQuestion && (
