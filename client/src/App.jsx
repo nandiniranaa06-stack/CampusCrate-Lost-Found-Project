@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-const API_URL = import.meta.env.VITE_API_URL || "https://campuscrate-lost-found-project.onrender.com/api";
+const API_URL = import.meta.env.VITE_API_URL || "https://campuscrate-lost-found-project.onrender.com";
 
 function App() {
   const [items, setItems] = useState([]);

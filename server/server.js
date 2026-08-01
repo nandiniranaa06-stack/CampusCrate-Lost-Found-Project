@@ -13,7 +13,7 @@ app.use(cors());
 app.use(express.json());
 
 const itemRoutes = require('./routes/itemRoutes');
-app.use('/api/items', itemRoutes);
+app.use('/items', itemRoutes);
 
 const mongoURI = process.env.MONGO_URI;
 
