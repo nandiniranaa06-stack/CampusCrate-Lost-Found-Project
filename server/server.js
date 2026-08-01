@@ -13,26 +13,25 @@ app.use(cors());
 app.use(express.json());
 
 const itemRoutes = require('./routes/itemRoutes');
-app.use('/api', itemRoutes);
+app.use('/api/items', itemRoutes);
 
 const mongoURI = process.env.MONGO_URI;
 
 if (!mongoURI) {
-  console.error('Error: MONGO_URI is missing in .env file!');
-  process.exit(1);
+    console.error('Error: MONGO_URI is missing in .env file!');
+    process.exit(1);
 }
 
-mongoose
-  .connect(mongoURI)
-  .then(() => console.log('MongoDB Connected Successfully'))
-  .catch((err) => {
-    console.error('MongoDB Connection Error: ', err.message);
-  });
+mongoose.connect(mongoURI)
+    .then(() => console.log('MongoDB Connected Successfully'))
+    .catch((err) => {
+        console.error('MongoDB Connection Error: ', err.message);
+    });
 
 app.get('/', (req, res) => {
-  res.send('CampusCrate API is running...');
+    res.send('CampusCrate API is running...');
 });
 
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+    console.log(`Server is running on port ${PORT}`);
 });
