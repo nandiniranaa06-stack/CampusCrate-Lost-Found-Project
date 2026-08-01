@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-const API_URL = import.meta.env.VITE_API_URL || "https://campuscrate-lost-found-project.onrender.com";
+const API_URL = import.meta.env.VITE_API_URL || "https://campuscrate-lost-found-project.onrender.com/api";
 
 function App() {
   const [items, setItems] = useState([]);
@@ -38,7 +38,7 @@ function App() {
 
   const checkBackend = async () => {
     try {
-      await axios.get(`${API_URL}/api/items`);
+      await axios.get(`${API_URL}/items`);
       setBackendStatus("🔵 Backend Connected Successfully");
     } catch (err) {
       setBackendStatus("⚪ Backend Connection Failed");
@@ -47,7 +47,7 @@ function App() {
 
   const fetchItems = async () => {
     try {
-      let url = `${API_URL}/api/items?`;
+      let url = `${API_URL}/items?`;
       if (filterCategory !== "All") {
         url += `category=${filterCategory}&`;
       }
@@ -74,7 +74,7 @@ function App() {
         date,
         claimQuestion 
       };
-      const res = await axios.post(`${API_URL}/api/items`, newItem);
+      const res = await axios.post(`${API_URL}/items`, newItem);
       setItems([res.data, ...items]);
       setTitle("");
       setDescription("");
@@ -94,7 +94,7 @@ function App() {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`${API_URL}/api/items/${id}`);
+      await axios.delete(`${API_URL}/items/${id}`);
       setItems(items.filter((item) => item._id !== id));
       showToast("🗑️ Item deleted successfully.");
     } catch (err) {
